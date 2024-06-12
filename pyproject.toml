@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "PasswordProtectedHttpServer"
+version = "1.0.0"
+description = ""
+authors = ["marcelm9 <marcel.menzel09@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{ include = "PasswordProtectedHttpServer", from = "main" }]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+flask = "^3.0.3"
+flask-jwt-extended = "^4.6.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
