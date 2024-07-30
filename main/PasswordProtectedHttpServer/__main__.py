@@ -33,7 +33,7 @@ if args.command == "newconfig":
 
 
 if not os.path.exists("config.json"):
-    print(f"config file not found: {'config.json'}")
+    print(f"config file not found: 'config.json'")
     exit(1)
 with open("config.json", "r") as f:
     config: dict = json.load(f)

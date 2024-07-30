@@ -19,7 +19,7 @@ class PasswordProtectedHttpServer:
         PasswordProtectedHttpServer.config = config
 
     def run():
-        app = flask.Flask(__name__)
+        app = flask.Flask(os.path.split(PasswordProtectedHttpServer.config["root"])[1])
         app.secret_key = PasswordProtectedHttpServer.config["secret-key"]
         JWTManager(app)
 
