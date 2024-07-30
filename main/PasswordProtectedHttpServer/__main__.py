@@ -17,6 +17,7 @@ expected = [
     "password",
     "token-expiration-in-minutes",
     "secret-key",
+    "allow-dotfiles",
 ]
 
 if args.command == "newconfig":

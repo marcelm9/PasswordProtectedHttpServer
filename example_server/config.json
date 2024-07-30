@@ -6,5 +6,6 @@
 	"index-filepath-from-root": "index.html",
 	"password": "password",
 	"token-expiration-in-minutes": 30,
-	"secret-key": "supersecretkey"
+	"secret-key": "supersecretkey",
+	"allow-dotfiles": true
 }

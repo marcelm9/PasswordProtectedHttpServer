@@ -81,6 +81,9 @@ class PasswordProtectedHttpServer:
                 return flask.send_file(
                     PasswordProtectedHttpServer.config["login-filepath"]
                 )
+            
+            if not PasswordProtectedHttpServer.config["allow-dotfiles"] and filename is not None and filename.startswith("."):
+                return flask.redirect(flask.url_for("home"))
 
             filename = (
                 filename
