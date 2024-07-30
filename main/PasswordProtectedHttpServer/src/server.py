@@ -74,7 +74,6 @@ class PasswordProtectedHttpServer:
                     return flask.redirect(flask.url_for("home"))
 
                 # if no login-filepath is set, the fallback login page is returned
-                print(f"{PasswordProtectedHttpServer.config['login-filepath'] = }")
                 if PasswordProtectedHttpServer.config["login-filepath"] == "":
                     return flask.send_file(FALLBACK_LOGIN_PATH)
 
