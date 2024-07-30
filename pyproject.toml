@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "PasswordProtectedHttpServer"
-version = "1.0.2"
+version = "1.0.3"
 description = "CLI tool for running basic static websites with password protection"
 authors = ["marcelm9 <marcel.menzel09@gmail.com>"]
 license = "MIT"
