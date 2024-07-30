@@ -4,6 +4,8 @@ from datetime import datetime, timedelta
 import flask
 from flask_jwt_extended import JWTManager, create_access_token
 
+FALLBACK_LOGIN_PATH = os.path.join(os.path.dirname(__file__), "fallback_login.html")
+
 
 class PasswordProtectedHttpServer:
     config: dict
@@ -14,7 +16,8 @@ class PasswordProtectedHttpServer:
 
     def init(config: dict):
         config["root"] = os.path.abspath(config["root"])
-        config["login-filepath"] = os.path.abspath(config["login-filepath"])
+        if config["login-filepath"] != "":
+            config["login-filepath"] = os.path.abspath(config["login-filepath"])
 
         PasswordProtectedHttpServer.config = config
 
@@ -62,14 +65,27 @@ class PasswordProtectedHttpServer:
                 flask.request.cookies.get("access_token")
             )
 
-            if PasswordProtectedHttpServer.config["password"] != "" and (token is None or datetime.now() > token):
+            if PasswordProtectedHttpServer.config["password"] != "" and (
+                token is None or datetime.now() > token
+            ):
+
+                # if no specific file is requested, return user to home
                 if filename is not None:
                     return flask.redirect(flask.url_for("home"))
+
+                # if no login-filepath is set, the fallback login page is returned
+                print(f"{PasswordProtectedHttpServer.config['login-filepath'] = }")
+                if PasswordProtectedHttpServer.config["login-filepath"] == "":
+                    return flask.send_file(FALLBACK_LOGIN_PATH)
+
                 return flask.send_file(
                     PasswordProtectedHttpServer.config["login-filepath"]
                 )
 
-            filename = filename or PasswordProtectedHttpServer.config["index-filepath-from-root"]
+            filename = (
+                filename
+                or PasswordProtectedHttpServer.config["index-filepath-from-root"]
+            )
             if flask.request.method == "GET":
                 return (
                     flask.send_from_directory(
@@ -78,4 +94,7 @@ class PasswordProtectedHttpServer:
                     200,
                 )
 
-        app.run(host=PasswordProtectedHttpServer.config["host"], port=PasswordProtectedHttpServer.config["port"])
+        app.run(
+            host=PasswordProtectedHttpServer.config["host"],
+            port=PasswordProtectedHttpServer.config["port"],
+        )
