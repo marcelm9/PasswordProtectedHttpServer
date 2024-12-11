@@ -1,18 +1,13 @@
 import os
-from datetime import datetime, timedelta
 
 import flask
-from flask_jwt_extended import JWTManager, create_access_token
 
 FALLBACK_LOGIN_PATH = os.path.join(os.path.dirname(__file__), "fallback_login.html")
 
 
 class PasswordProtectedHttpServer:
     config: dict
-
-    tokens = {
-        # token: expiration
-    }
+    trusted_ips: list[str] = []
 
     def init(config: dict):
         config["root"] = os.path.abspath(config["root"])
@@ -23,8 +18,6 @@ class PasswordProtectedHttpServer:
 
     def run():
         app = flask.Flask(os.path.split(PasswordProtectedHttpServer.config["root"])[1])
-        app.secret_key = PasswordProtectedHttpServer.config["secret-key"]
-        JWTManager(app)
 
         @app.route("/login", methods=["POST"])
         def login():
@@ -41,34 +34,21 @@ class PasswordProtectedHttpServer:
             data = form
 
             if data.get("password") == PasswordProtectedHttpServer.config["password"]:
-                access_token = create_access_token(identity=data.get("username"))
-                PasswordProtectedHttpServer.tokens[
-                    access_token
-                ] = datetime.now() + timedelta(
-                    minutes=PasswordProtectedHttpServer.config[
-                        "token-expiration-in-minutes"
-                    ]
+                PasswordProtectedHttpServer.trusted_ips.append(
+                    flask.request.remote_addr
                 )
-
                 response = flask.make_response(flask.redirect(flask.url_for("home")))
-                response.set_cookie("access_token", access_token)
-
                 return response, 302
 
             return flask.redirect(flask.url_for("home")), 302
 
         @app.route("/", defaults=dict(filename=None))
-        @app.route("/<path:filename>", methods=["GET", "POST"])
+        @app.route("/<path:filename>", methods=["GET"])
         def home(filename):
-
-            token = PasswordProtectedHttpServer.tokens.get(
-                flask.request.cookies.get("access_token")
-            )
-
+            ip = flask.request.remote_addr
             if PasswordProtectedHttpServer.config["password"] != "" and (
-                token is None or datetime.now() > token
+                ip not in PasswordProtectedHttpServer.trusted_ips
             ):
-
                 # if no specific file is requested, return user to home
                 if filename is not None:
                     return flask.redirect(flask.url_for("home"))
@@ -80,8 +60,12 @@ class PasswordProtectedHttpServer:
                 return flask.send_file(
                     PasswordProtectedHttpServer.config["login-filepath"]
                 )
-            
-            if not PasswordProtectedHttpServer.config["allow-dotfiles"] and filename is not None and filename.startswith("."):
+
+            if (
+                not PasswordProtectedHttpServer.config["allow-dotfiles"]
+                and filename is not None
+                and filename.startswith(".")
+            ):
                 return flask.redirect(flask.url_for("home"))
 
             filename = (

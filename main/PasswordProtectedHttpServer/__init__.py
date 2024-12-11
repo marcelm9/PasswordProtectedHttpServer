@@ -1,1 +1,1 @@
-from .src.server import PasswordProtectedHttpServer
+from .src.server import PasswordProtectedHttpServer as PasswordProtectedHttpServer

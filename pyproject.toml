@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "PasswordProtectedHttpServer"
-version = "1.0.4"
+version = "1.1.0"
 description = "CLI tool for running basic static websites with password protection"
 authors = ["marcelm9 <marcel.menzel09@gmail.com>"]
 license = "MIT"
@@ -9,8 +9,7 @@ packages = [{ include = "PasswordProtectedHttpServer", from = "main" }]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-flask = "^3.0.3"
-flask-jwt-extended = "^4.6.0"
+flask = "^3.1.0"
 
 [build-system]
 requires = ["poetry-core"]
