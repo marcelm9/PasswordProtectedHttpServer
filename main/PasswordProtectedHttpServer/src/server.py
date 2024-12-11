@@ -32,11 +32,15 @@ class PasswordProtectedHttpServer:
                 form = flask.request.data.decode()
 
             data = form
+            ip = flask.request.remote_addr
 
             if data.get("password") == PasswordProtectedHttpServer.config["password"]:
-                PasswordProtectedHttpServer.trusted_ips.append(
-                    flask.request.remote_addr
-                )
+                if ip not in PasswordProtectedHttpServer.trusted_ips:
+                    PasswordProtectedHttpServer.trusted_ips.append(
+                        flask.request.remote_addr
+                    )
+                    print(f"Added trusted ip: {flask.request.remote_addr}")
+                    print(f"All trusted ips: {PasswordProtectedHttpServer.trusted_ips}")
                 response = flask.make_response(flask.redirect(flask.url_for("home")))
                 return response, 302
 
