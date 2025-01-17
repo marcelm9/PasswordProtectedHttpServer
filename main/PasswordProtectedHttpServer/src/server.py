@@ -1,6 +1,7 @@
 import os
 
 import flask
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 FALLBACK_LOGIN_PATH = os.path.join(os.path.dirname(__file__), "fallback_login.html")
 
@@ -18,6 +19,7 @@ class PasswordProtectedHttpServer:
 
     def run():
         app = flask.Flask(os.path.split(PasswordProtectedHttpServer.config["root"])[1])
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1, x_prefix=1)
 
         @app.route("/login", methods=["POST"])
         def login():
