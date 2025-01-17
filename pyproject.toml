@@ -8,7 +8,7 @@ readme = "README.md"
 packages = [{ include = "PasswordProtectedHttpServer", from = "main" }]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.9"
 flask = "^3.1.0"
 werkzeug = "^3.1.3"
 
